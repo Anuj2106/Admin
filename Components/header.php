@@ -44,9 +44,15 @@
     <!--end::Third Party Plugin(Bootstrap Icons)-->
     <!--begin::Required Plugin(AdminLTE)-->
     <link rel="stylesheet" href="/education/Admin/css/adminlte.css" />
-    <link rel="stylesheet" href="/education/Admin/css/Custom.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="/education/Admin/css/custom.css" />
+   
     <!--end::Required Plugin(AdminLTE)-->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- JQUERY  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- Include SweetAlert JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
   </head>
   <!--end::Head-->
   <!--begin::Body-->

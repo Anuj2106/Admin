@@ -24,6 +24,7 @@ $total_pages = ceil($total_courses / $limit);
 // Fetch paginated results
 $sql = "SELECT * FROM course LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
+$count = $offset + 1;
 ?>
 
 <main class="app-main">
@@ -48,7 +49,7 @@ $result = $conn->query($sql);
         <div class="col-12">
           <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
-             <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal">
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCourseModal">
                 Add Course
               </button>
               <div class="d-flex align-items-center mx-auto">
@@ -77,22 +78,22 @@ $result = $conn->query($sql);
                 <tbody id="TableBody">
                   <?php while ($row = $result->fetch_assoc()) { ?>
                     <tr>
-                      <td><?php echo $row['course_id']; ?></td>
+                      <td><?php echo $count++ ?></td>
                       <td><?php echo $row['course_name']; ?></td>
                       <td><?php echo $row['course_fees']; ?></td>
                       <td><?php echo $row['course_fees_gst']; ?></td>
                       <td><?php echo $row['course_total_fees']; ?></td>
                       <td><?php echo $row['course_time']; ?></td>
                       <td>
-                        <button type="button" class="btn btn-sm btn-primary btn-rounded">
+                        <button type="button" class="btn btn-sm edit-course-btn btn-primary btn-rounded" data-id="<?php echo intval($row['course_id']); ?>">
                           <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-sm btn-danger delete-btn" data-id="<?php echo intval($row['course_id']) ?>" data-role="3" data-source="course">
+                        <!--  Here is role ifd =5 for adding deleting query for course -->
+                        <button class="btn btn-sm btn-danger delete-btn"
+                          data-id="<?php echo intval($row['course_id']); ?> " data-source="course" data-role="5">
                           <i class="bi bi-trash-fill"></i>
                         </button>
-                        <button class="btn btn-sm btn-info view-btn" data-id="<?php echo intval($row['course_id']) ?>" data-role="3" data-source="course">
-                          <i class="bi bi-eye-fill"></i>
-                        </button>
+
                       </td>
                     </tr>
                   <?php } ?>
@@ -125,5 +126,5 @@ $result = $conn->query($sql);
 
 
 <?php include "../Components/footer.php";
-include"../Components/modal.php";
+include "../Components/modal.php";
 ?>

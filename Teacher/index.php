@@ -21,6 +21,7 @@ $total_pages = ceil($total_courses / $limit);
 // Fetch paginated results
 $sql = "SELECT * FROM teacher";
 $result = $conn->query($sql);
+$count=1;
 ?>
 <main class="app-main">
   <div class="app-content-header">
@@ -44,7 +45,7 @@ $result = $conn->query($sql);
         <div class="col-12">
           <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 me-auto">Course List</h5>
+            <h5 class="card-title mb-0 me-auto">Teacher List</h5>
               <div class="d-flex align-items-center mx-auto">
                 <label for="recordsPerPage" class="me-2">Show</label>
                 <select id="recordsPerPage" class="form-select w-auto" onchange="changeRecordsPerPage()">
@@ -75,7 +76,7 @@ $result = $conn->query($sql);
                 <tbody id="TableBody">
                   <?php while ($row = $result->fetch_assoc()) { ?>
                     <tr>
-                      <td><?php echo $row['teacher_id']; ?></td>
+                      <td><?php echo $count++ ?></td>
                       <td><?php echo $row['teacher_name']; ?></td>
                       <td><?php echo $row['teacher_email']; ?></td>
                       <td><?php echo $row['teacher_phone']; ?></td>
@@ -94,7 +95,7 @@ $result = $conn->query($sql);
                         </button>
                       </td>
                       <td>
-                        <button type="button" class="btn btn-sm btn-primary btn-rounded">
+                        <button type="button" class="btn btn-sm edit-btn btn-primary btn-rounded" data-phone="<?php echo $row['teacher_phone']?>" data-role="3">
                           <i class="bi bi-pencil-square"></i>
                         </button>
                         <button class="btn btn-sm  btn-danger delete-btn" data-phone="<?php echo  intval($row['teacher_phone']) ?>" data-role="3" >
@@ -132,6 +133,7 @@ $result = $conn->query($sql);
     </div>
   </div>
 </main>
-<?php include "../Components/footer.php";
-include "../Components/modal.php"
+<?php 
+include "../Components/modal.php";
+include "../Components/footer.php";
 ?>
