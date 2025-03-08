@@ -2,11 +2,12 @@
 include "../Components/connect.php";
 header("Content-Type: application/json");
 
-// Read JSON input
-$data = json_decode(file_get_contents("php://input"), true);
+$data = $_POST ?: json_decode(file_get_contents("php://input"), true);
 
-// Debugging (Check received data)
-file_put_contents("debug.log", json_encode($data) . PHP_EOL, FILE_APPEND);
+if (!$data) {
+    echo json_encode(["error" => "Invalid JSON input"]);
+    exit;
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -26,7 +27,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $user = array_merge($user, $teacherQuery->fetch_assoc());
                 }
             } elseif ($role_id == 4) { // Student
-                $studentQuery = $conn->query("SELECT * FROM student WHERE student_phone = '$user_phone'");
+                $studentQuery = $conn->query("SELECT student.*, course.course_name 
+                    FROM student 
+                    LEFT JOIN course ON student.course_id = course.course_id 
+                    WHERE student_phone = '$user_phone'");
                 if ($studentQuery->num_rows > 0) {
                     $user = array_merge($user, $studentQuery->fetch_assoc());
                 }
@@ -50,13 +54,43 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user_pass = $conn->real_escape_string($data['user_pass']);
         $status = (int)$data['status'];
 
+        // ✅ Fetch Old Image Before Updating
+        $oldImagePath = "";
+        $getImageQuery = "SELECT image FROM users WHERE user_id = '$user_id'";
+        $getImageResult = $conn->query($getImageQuery);
+
+        if ($getImageResult->num_rows > 0) {
+            $row = $getImageResult->fetch_assoc();
+            $oldImagePath = $row['image'] ?? "";
+        }
+
+        // ✅ Image Upload Handling
+        $upload_dir = "../uploads/";
+        $imagePath = $oldImagePath; // Default to old image if no new file is uploaded
+
+        if (isset($_FILES['user_image']) && !empty($_FILES['user_image']['name'])) {
+            $image_name = basename($_FILES["user_image"]["name"]);
+            $image_ext = pathinfo($image_name, PATHINFO_EXTENSION);
+            $new_image_name = "user_" . time() . "_" . $user_id . "." . $image_ext;
+            $target_file = $upload_dir . $new_image_name;
+
+            if (move_uploaded_file($_FILES["user_image"]["tmp_name"], $target_file)) {
+                // ✅ Delete old image if it exists
+                if (!empty($oldImagePath) && file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+                $imagePath = $target_file; // Store new image path
+            }
+        }
+
         // ✅ Update `users` Table
         $updateUser = "UPDATE users SET 
             user_name='$user_name', 
             user_email='$user_email', 
             user_phone='$user_phone', 
             user_pass='$user_pass', 
-            status='$status' 
+            status='$status',
+            image='$imagePath'
             WHERE user_id='$user_id'";
 
         if ($conn->query($updateUser)) {
@@ -82,7 +116,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $conn->query($updateTeacher);
             } elseif ($role_id == 4) { // Student Update
                 $student_batch = (int)$data['batch_id'];
-                $student_course = $conn->real_escape_string($data['student_course']);
+                $course_id = $conn->real_escape_string($data['course_id']);
                 $student_fees = (float)$data['student_fees'];
                 $student_gender = $conn->real_escape_string($data['student_gender']);
                 $student_join_date = $conn->real_escape_string($data['student_joining_date']);
@@ -92,7 +126,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     student_name='$user_name', 
                     student_email='$user_email', 
                     student_phone='$user_phone', 
-                    student_course='$student_course', 
+                    course_id='$course_id', 
                     batch_id='$student_batch', 
                     student_status='$status', 
                     student_fees='$student_fees', 
@@ -104,7 +138,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $conn->query($updateStudent);
             }
 
-            echo json_encode(["success" => "User updated successfully"]);
+            echo json_encode(["success" => "User updated successfully", "image" => $imagePath]);
         } else {
             echo json_encode(["error" => "User update failed", "sql_error" => $conn->error]);
         }
@@ -128,9 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ✅ Update Course Details
     elseif (isset($data['update'], $data['course_id'])) {
-        file_put_contents("debug.log", "course_id received: " . json_encode($data['course_id']) . PHP_EOL, FILE_APPEND);
         $course_id = (int)$data['course_id'];
-        file_put_contents("debug.log", "course_id after cast: " . json_encode($course_id) . PHP_EOL, FILE_APPEND);
         $course_name = $conn->real_escape_string($data['course_name']);
         $course_fees = (float)$data['course_fees'];
         $course_time = $conn->real_escape_string($data['course_time']);
@@ -152,12 +184,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($conn->query($updateCourse)) {
             echo json_encode(["success" => "Course updated successfully"]);
         } else {
-            echo json_encode(["error" => "Course update failed", "sql_error" => $conn->error, "sql"=>$updateCourse]);
+            echo json_encode(["error" => "Course update failed", "sql_error" => $conn->error]);
         }
         exit;
     }
 
-    // ❌ If no valid request is found
+    // ❌ Invalid request
     else {
         echo json_encode(["error" => "Invalid request"]);
     }

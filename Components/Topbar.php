@@ -157,20 +157,21 @@
             <li class="nav-item dropdown user-menu">
               <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                 <img
-                  src="/education/Admin/img/user2-160x160.jpg"
+                  src="/education/Admin<?php echo $_SESSION['image']; ?>"
                   class="user-image rounded-circle shadow"
                   alt="User Image"
                 />
                 <span class="d-none d-md-inline">
 
                <?php echo $_SESSION['user_name']; ?>
+               
                 </span>
               </a>
               <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
                 <!--begin::User Image-->
                 <li class="user-header text-bg-primary">
                   <img
-                    src="/education/Admin/img/user2-160x160.jpg"
+                    src="/education/Admin<?php echo $_SESSION['image']; ?>"
                     class="rounded-circle shadow"
                     alt="User Image"
                   />

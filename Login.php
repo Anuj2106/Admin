@@ -13,6 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = $result->fetch_assoc();
         $_SESSION["user_name"] = $row['user_name'];
         $_SESSION["role_id"] = $row['role_id'];
+        $_SESSION["image"] = $row['image'];
         $_SESSION["Login_in"] = true;
         handleUserRole($row['role_id']);
     } else {

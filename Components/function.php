@@ -96,7 +96,7 @@ function renderDashboardContent($conn) {
   $totalstudent = getTotalCount($conn, "student");
 
   echo "<div class='row'>";
-  renderSmallBoxWidget($totalUsers, 'Users', ' bi bi-people-fill', '/education/Admin/User', 'text-bg-primary');
+  renderSmallBoxWidget($totalUsers, 'Users', 'bi-people-fill', '/education/Admin/User', 'text-bg-primary');
   renderSmallBoxWidget($totalteacher, 'Employees', 'bi-person-video', '/education/Admin/Teacher', 'text-bg-success');
   renderSmallBoxWidget($totalstudent, 'Students', 'bi-person-fill-add', '/education/Admin/Student', 'text-bg-warning', 'text-white');
   renderSmallBoxWidget($totalcourse, 'Courses', 'bi-book', '/education/Admin/Course', 'text-bg-danger');

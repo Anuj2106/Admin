@@ -60,7 +60,7 @@ $count=1;
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
-                    <th>#</thc
+                    <th>#</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Phone</th>
@@ -82,7 +82,7 @@ $count=1;
                       <td><?php echo $row['teacher_phone']; ?></td>
                       <td><?php echo $row['teacher_salary']; ?></td>
                       <td><?php echo $row['teacher_qualification']; ?></td>
-                      <td><?php echo $row['teacher_exprience']; ?></td>
+                      <td><?php echo $row['teacher_experience']; ?></td>
                       <td><?php echo $row['teacher_join_date']; ?></td>
                       <td><?php echo $row['teacher_address']; ?></td>
                       <td>

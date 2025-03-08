@@ -1,3 +1,4 @@
+
 <!-- MOdal for  Adding user table  -->
 <div class="modal fade" id="addUserModal" tabindex="-1" aria-labelledby="addUserModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -7,11 +8,15 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="../User/adduser.php" method="POST">
+        <form id="userForm" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="userName" class="form-label">Name</label>
             <input type="text" class="form-control" id="userName" name="user_name" required>
           </div>
+          <div class="mb-3">
+    <label for="userImage" class="form-label">Upload Image</label>
+    <input type="file" class="form-control" id="userImage" name="user_image" required>
+  </div>
           <div class="mb-3">
             <label for="userEmail" class="form-label">Email</label>
             <input type="email" class="form-control" id="userEmail" name="user_email" required>
@@ -67,7 +72,8 @@
           <div class="student" style="display: none;">
               <div class="mb-3">
                 <label for="Batch" class="form-label">Batch Timing</label>
-                <select class="form-select" id="Batch" name="batch_id" required>
+                <select class="form-select" id="Batch" name="batch_id">
+                  <option value="">Select</option>
                   <option value="1">8:00 AM - 10:00 AM</option>
                   <option value="2">10:00 AM - 12:00 PM</option>
                   <option disabled>-- Lunch Break (12:00 PM - 1:00 PM) --</option>
@@ -91,9 +97,9 @@
                   ?>
                 </select>
               </div>
-              <div class="mb-3">
+              <div class="mb-3">  
                 <label for="studentFees" class="form-label">Fees</label>
-                <input type="text" class="form-control" id="studentFees" name="student_fees" placeholder="Fees" readonly>
+                <input type="text" class="form-control" id="studentFees" name="student_fees" placeholder="Fees" >
               </div>
               <div class="mb-3">
                 <label for="studentAddress" class="form-label">Address</label>
@@ -198,7 +204,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form id="editForm">
+        <form id="editForm" enctype="multipart/form-data">
           <input type="hidden" id="editUserId" name="user_id">
           <div class="mb-3">
             <label for="editUserName" class="form-label">Name</label>
@@ -231,6 +237,17 @@
               <option value="1">Inactive</option>
             </select>
           </div>
+
+          <!-- ✅ Image Upload Field -->
+          <div class="mb-3">
+            <label for="editUserImage" class="form-label">Profile Image</label>
+            <input type="file" class="form-control" id="editUserImage" name="user_image" accept="image/*">
+            <div class="mt-2">
+              <img id="previewUserImage" src="" alt="User Image" width="150" style="border-radius: 8px;">
+            </div>
+          </div>
+
+          <!-- ✅ Teacher Fields (Hidden by Default) -->
           <div class="teacher-fields" style="display: none;">
             <div class="mb-3">
               <label for="editTeacherSalary" class="form-label">Salary</label>
@@ -253,6 +270,8 @@
               <input type="text" class="form-control" id="editTeacherAddress" name="teacher_address">
             </div>
           </div>
+
+          <!-- ✅ Student Fields (Hidden by Default) -->
           <div class="student-fields" style="display: none;">
             <div class="mb-3">
               <label for="editStudentBatch" class="form-label">Batch Timing</label>
@@ -266,9 +285,30 @@
               </select>
             </div>
             <div class="mb-3">
-              <label for="editStudentCourse" class="form-label">Course</label>
-              <select class="form-select" id="editStudentCourse" name="course_id"></select>
-            </div>
+    <label for="editStudentCourse" class="form-label">Course</label>
+    <select class="form-select" id="editStudentCourse" name="course_id">
+        <option value="">-- Select --</option>
+        <?php
+        $sql = "SELECT * FROM course";
+        $result = $conn->query($sql);
+
+        // Assuming $selectedCourseId is retrieved from the database (previously selected value)
+        while ($row = $result->fetch_assoc()) {
+            $selected = ($row['course_id'] == $selectedCourseId) ? 'selected' : '';
+           
+            ?>
+            <option value="<?php echo $row['course_id']; ?>" <?php echo $selected; ?>>
+                <?php echo htmlspecialchars($row['course_name']); ?>
+            </option>
+        <?php
+        }
+        ?>
+    </select>
+</div>
+
+
+            <input type="hidden" id="hiddenUserImage" name="old_image">
+
             <div class="mb-3">
               <label for="editStudentFees" class="form-label">Fees</label>
               <input type="text" class="form-control" id="editStudentFees" name="student_fees" readonly>
@@ -290,6 +330,7 @@
               <input type="date" class="form-control" id="editStudentJoinDate" name="student_joining_date">
             </div>
           </div>
+
           <button type="submit" class="btn btn-primary">Update User</button>
         </form>
       </div>
