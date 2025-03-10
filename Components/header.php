@@ -53,6 +53,11 @@
     <!-- Include SweetAlert JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <script src="https://markcell.github.io/jquery-tabledit/jquery.tabledit.min.js"></script>
+    <!--  -->
+    <!--  -->
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
   </head>
   <!--end::Head-->
   <!--begin::Body-->

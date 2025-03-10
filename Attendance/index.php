@@ -24,11 +24,12 @@ $total_students_result = $conn->query($total_students_query);
 $total_students = $total_students_result->fetch_assoc()['total'];
 $total_pages = ceil($total_students / $records_per_page);
 
-$sql = "SELECT student.student_id, student.student_name, batch.batch_name, course.course_name 
+$sql = "SELECT student.student_id, student.student_name, student.course_id, student.batch_id, batch.batch_name, course.course_name 
         FROM student
         INNER JOIN batch ON student.batch_id = batch.batch_id
         INNER JOIN course ON student.course_id = course.course_id
         LIMIT $records_per_page OFFSET $offset";
+
 
 $result = $conn->query($sql);
 if (!$result) {
@@ -50,37 +51,43 @@ if (!$result) {
     </div>
     
     <div class="card">
-        <div class="card-header">
-        <div class="d-flex justify-content-between align-items-center gap-3 mb-3">
-                <div class="w-auto">
-                    <label for="batchFilter" class="form-label fw-bold mb-1">Filter by Batch:</label>
-                    <select id="batchFilter" class="form-select form-select-sm">
-                        <option value="">All Batches</option>
-                        <?php
-                        $batch_query = "SELECT * FROM batch";
-                        $batch_result = $conn->query($batch_query);
-                        while ($batch = $batch_result->fetch_assoc()) {
-                            echo "<option value='{$batch['batch_name']}'>{$batch['batch_name']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <div class="w-auto">
-                    <label for="courseFilter" class="form-label fw-bold mb-1">Filter by Course:</label>
-                    <select id="courseFilter" class="form-select form-select-sm">
-                        <option value="">All Courses</option>
-                        <?php
-                        $course_query = "SELECT * FROM course";
-                        $course_result = $conn->query($course_query);
-                        while ($course = $course_result->fetch_assoc()) {
-                            echo "<option value='{$course['course_name']}'>{$course['course_name']}</option>";
-                        }
-                        ?>
-                    </select>
-                </div>
-                <input type="text" id="searchInput" class="form-control w-25" onkeyup="searchTable()" placeholder="Search Name...">
-            </div>
+    <div class="card-header">
+    <div class="d-flex align-items-center justify-content-between gap-3 flex-wrap">
+        <div class="d-flex align-items-center gap-2">
+            <label for="batchFilter" class="mb-0">Batch:</label>
+            <select id="batchFilter" class="form-control">
+                
+                <option value="">All Batches</option>
+                <?php
+                $batch_query = "SELECT * FROM batch";
+                $batch_result = $conn->query($batch_query);
+                while ($batch = $batch_result->fetch_assoc()) {
+                    echo "<option value='{$batch['batch_name']}'>{$batch['batch_name']}</option>";
+                }
+                ?>
+            </select>
         </div>
+        <div class="d-flex align-items-center gap-2">
+            
+            <label for="courseFilter" class="mb-0">Course:</label>
+            <select id="courseFilter" class="form-control">
+                <option value="">All Courses</option>
+                <?php
+                $course_query = "SELECT DISTINCT course_name FROM course";
+                $course_result = $conn->query($course_query);
+                while ($course_row = $course_result->fetch_assoc()) {
+                    echo "<option value='{$course_row['course_name']}'>{$course_row['course_name']}</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <input type="text" id="searchInput" class="form-control" onkeyup="searchTable()" placeholder="Search Name...">
+        </div>
+    </div>
+</div>
+
+
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered table-striped" id="attendanceTable">
@@ -111,7 +118,7 @@ if (!$result) {
                                     $attendance_result = $conn->query($attendance_query);
                                     $savedAttendance = $attendance_result->fetch_assoc()['attendance_status'] ?? '';
                                     ?>
-                                    <td contenteditable="true" class="editable" data-student="<?= $row['student_id']; ?>" data-date="<?= $currentDate; ?>">
+                                    <td contenteditable="true" class="editable" data-student="<?= $row['student_id']; ?>" data-date="<?= $currentDate; ?>" data-course="<?= $row['course_id']?> " data-batch="<?= $row['batch_id']?> " >
                                         <?= $savedAttendance; ?>
                                     </td>
                                 <?php endfor; ?>

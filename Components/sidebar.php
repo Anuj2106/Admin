@@ -117,6 +117,15 @@ if($_SESSION['role_id']==2 || $_SESSION['role_id']==1)
                 </a>
                
               </li>
+                <li class="nav-item">
+                <a href="/education/Admin/Attendance/View_attendance.php" class="nav-link">
+                  <i class="nav-icon bi bi-calendar-check"></i>
+                  <p>
+                  View Attendance
+                  </p>
+                </a>
+               
+              </li>
                  
                 </ul>
               </li>

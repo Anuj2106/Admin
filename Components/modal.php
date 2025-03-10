@@ -11,7 +11,7 @@
         <form id="userForm" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="userName" class="form-label">Name</label>
-            <input type="text" class="form-control" id="userName" name="user_name" required>
+            <input type="text" class="form-control" id="userName" name="user_name" required >
           </div>
           <div class="mb-3">
     <label for="userImage" class="form-label">Upload Image</label>

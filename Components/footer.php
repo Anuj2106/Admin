@@ -32,6 +32,8 @@
     ></script>
     <!--end::Required Plugin(Bootstrap 5)--><!--begin::Required Plugin(AdminLTE)-->
     <script src="/education/Admin/js/adminlte.js"></script> 
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
    
     <!--end::Required Plugin(AdminLTE)--><!--begin::OverlayScrollbars Configure-->
     <script>

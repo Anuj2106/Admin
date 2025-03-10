@@ -28,12 +28,12 @@ $count=1;
     <div class="container-fluid">
       <div class="row">
         <div class="col-sm-6">
-          <h3 class="mb-0">Teacher Management</h3>
+          <h3 class="mb-0">Employee Management</h3>
         </div>
         <div class="col-sm-6">
           <ol class="breadcrumb float-sm-end">
             <li class="breadcrumb-item"><a href="/education/Admin/">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Teachers</li>
+            <li class="breadcrumb-item active" aria-current="page">Employees</li>
           </ol>
         </div>
       </div>
@@ -45,7 +45,7 @@ $count=1;
         <div class="col-12">
           <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0 me-auto">Teacher List</h5>
+            <h2 class="card-title fw-bolder mb-0 me-auto">Employee List</h2>
               <div class="d-flex align-items-center mx-auto">
                 <label for="recordsPerPage" class="me-2">Show</label>
                 <select id="recordsPerPage" class="form-select w-auto" onchange="changeRecordsPerPage()">
@@ -57,60 +57,64 @@ $count=1;
               <input type="text" id="searchInput" class="form-control w-25 ms-2" onkeyup="searchTable()" placeholder="Search Name...">
             </div>
             <div class="card-body">
-              <table class="table table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Salary</th>
-                    <th>Qualification</th>
-                    <th>Experience</th>
-                    <th>Joining Date</th>
-                    <th>Address</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="TableBody">
-                  <?php while ($row = $result->fetch_assoc()) { ?>
-                    <tr>
-                      <td><?php echo $count++ ?></td>
-                      <td><?php echo $row['teacher_name']; ?></td>
-                      <td><?php echo $row['teacher_email']; ?></td>
-                      <td><?php echo $row['teacher_phone']; ?></td>
-                      <td><?php echo $row['teacher_salary']; ?></td>
-                      <td><?php echo $row['teacher_qualification']; ?></td>
-                      <td><?php echo $row['teacher_experience']; ?></td>
-                      <td><?php echo $row['teacher_join_date']; ?></td>
-                      <td><?php echo $row['teacher_address']; ?></td>
-                      <td>
-                        <button class="btn btn-sm toggle-status <?php echo $row['teacher_status'] == 0 ? 'btn-success' : 'btn-danger'; ?>" data-phone="<?php echo $row['teacher_phone']; ?>" 
-                        data-status="<?php echo $row['teacher_status']; ?>" data-role="3"
-                        >
-                        <p class="mb-0">
-                          <?php echo $row['teacher_status'] == 0 ? 'Active' : 'Inactive'; ?>
-                        </p>
-                        </button>
-                      </td>
-                      <td>
-                        <button type="button" class="btn btn-sm edit-btn btn-primary btn-rounded" data-phone="<?php echo $row['teacher_phone']?>" data-role="3">
-                          <i class="bi bi-pencil-square"></i>
-                        </button>
-                        <button class="btn btn-sm  btn-danger delete-btn" data-phone="<?php echo  intval($row['teacher_phone']) ?>" data-role="3" >
-                          <i class="bi bi-trash-fill"></i>
-                        </button>
-                        <button class="btn btn-sm btn-info view-btn" data-id="<?php echo  intval($row['teacher_id']) ?>" data-role="3" data-source="teacher">
-                          <i class="bi bi-eye-fill"></i>
-                        </button>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Uid</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Salary</th>
+          <th>Qualification</th>
+          <th>Experience</th>
+          <th>Joining Date</th>
+          <th>Address</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="TableBody">
+        <?php while ($row = $result->fetch_assoc()) { ?>
+          <tr>
+            <td><?php echo $row['teacher_uid'] ?></td>
+            <td><img src="<?php echo $row['teacher_image']; ?>" style="width: 45px; height: 45px" alt=""></td>
+            <td><?php echo $row['teacher_name']; ?></td>
+            <td><?php echo $row['teacher_email']; ?></td>
+            <td><?php echo $row['teacher_phone']; ?></td>
+            <td><?php echo $row['teacher_salary']; ?></td>
+            <td><?php echo $row['teacher_qualification']; ?></td>
+            <td><?php echo $row['teacher_experience']; ?></td>
+            <td><?php echo $row['teacher_join_date']; ?></td>
+            <td><?php echo $row['teacher_address']; ?></td>
+            <td>
+              <button class="btn btn-sm toggle-status <?php echo $row['teacher_status'] == 0 ? 'btn-success' : 'btn-danger'; ?>" data-phone="<?php echo $row['teacher_phone']; ?>" 
+              data-status="<?php echo $row['teacher_status']; ?>" data-role="3">
+                <p class="mb-0">
+                  <?php echo $row['teacher_status'] == 0 ? 'Active' : 'Inactive'; ?>
+                </p>
+              </button>
+            </td>
+            <td >
+              <div class="d-flex justify-content-between">
+              <button type="button" class="btn btn-sm edit-btn btn-primary btn-rounded" data-phone="<?php echo $row['teacher_phone']?>" data-role="3">
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button class="btn btn-sm btn-danger delete-btn" data-phone="<?php echo intval($row['teacher_phone']) ?>" data-role="3">
+                <i class="bi bi-trash-fill"></i>
+              </button>
+              <button class="btn btn-sm btn-info view-btn" data-id="<?php echo intval($row['teacher_id']) ?>" data-role="3" data-source="teacher">
+                <i class="bi bi-eye-fill"></i>
+              </button>
+              </div>
+            </td>
+          </tr>
+        <?php } ?>
+      </tbody>
+    </table>
+  </div>
+</div>
 
-                      </td>
-                    </tr>
-                  <?php } ?>
-                </tbody>
-              </table>
-            </div>
             <div class="card-footer d-flex justify-content-between">
               <span>Showing <?php echo $result->num_rows; ?> of <?php echo $total_courses; ?> Teacher</span>
               <ul class="pagination pagination-sm mb-0">

@@ -5,16 +5,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $student_id = $_POST['student_id'];
     $date = $_POST['attendance_date']; // Updated
     $status = $_POST['attendance_status']; // Updated
-    $course_id = $_POST['course_id'] ?? null; // Optional
-    $batch_id = $_POST['batch_id'] ?? null; // Optional
-
+    $course_id = $_POST['course_id']  ; // Optional
+    $batch_id = $_POST['batch_id'] ; // Optional
     // Check if attendance exists
     $check_query = "SELECT * FROM student_attendance WHERE student_id = '$student_id' AND attendance_date = '$date'";
     $result = $conn->query($check_query);
 
     if ($result->num_rows > 0) {
         // Update existing record
-        $update_query = "UPDATE student_attendance SET attendance_status = '$status' WHERE student_id = '$student_id' AND attendance_date = '$date'";
+        $update_query = "UPDATE student_attendance SET 
+        attendance_status = '$status',
+        student_id='$student_id',
+        course_id='$course_id',
+        batch_id='$batch_id'
+        
+         WHERE student_id = '$student_id' AND attendance_date = '$date'";
         if ($conn->query($update_query)) {
             echo "Attendance updated!";
         } else {

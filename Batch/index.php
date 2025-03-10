@@ -8,8 +8,21 @@ include "../Components/connect.php";
 include "../Components/header.php";
 include "../Components/Topbar.php";     
 include "../Components/sidebar.php";
-$sql="SELECT * FROM batch ";
+$limit = isset($_GET['records_per_page']) ? intval($_GET['records_per_page']) : 10; // Number of records per page
+$page = isset($_GET['page']) ? intval($_GET['page']) : 1;
+$offset = ($page - 1) * $limit;
+
+// Get total records count
+$total_query = "SELECT COUNT(*) as total FROM batch";
+$total_result = $conn->query($total_query);
+$total_row = $total_result->fetch_assoc();
+$total_batch = $total_row['total'];
+$total_pages = ceil($total_batch / $limit);
+
+// Fetch paginated results
+$sql = "SELECT * FROM batch LIMIT $limit OFFSET $offset";
 $result = $conn->query($sql);
+$count = $offset + 1;
 ?>
 <main class="app-main">
     <!--begin::App Content Header-->
@@ -22,15 +35,10 @@ $result = $conn->query($sql);
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-end">
                         <li class="breadcrumb-item"><a href="/education/Admin/">Home</a></li>
-                        <li class="breadcrumb-item active" aria-current="page">Course</li>
+                        <li class="breadcrumb-item active" aria-current="page">batch</li>
                     </ol>
                 </div>
-                <div class="col-12 mb-3">
-                        <!-- Button to trigger modal -->
-                        <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBatchModal">
-                            Add  Batch
-                        </button> -->
-                    </div>
+               
             </div>
             <!--end::Row-->
         </div>
@@ -44,12 +52,23 @@ $result = $conn->query($sql);
             <!--begin::Row-->
             <div class="row">
                 <div class="col-12">
+                <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                <h1> Batches </h1>   
+                <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addBatchModal">
+                        Add  Batch
+                    </button> -->
+              
+              <!-- <input type="text" id="searchInput" class="form-control w-25 ms-2" onkeyup="searchTable()" placeholder="Search Name..."> -->
+            </div>
+                    
+                <div class="card-body">
                     <table class="table table-bordered">
                       <thead>
                         <tr>
                           <th>Batch No</th>
                           <th>Timing</th>
-                          <th>Edit</th>
+                        
                          
 
                         </tr>
@@ -61,25 +80,32 @@ $result = $conn->query($sql);
                        <tr>
                           <td><?php echo $row['batch_id'];?></td>
                           <td><?php echo $row['batch_name'] ; ?> </td>
-                         
-                          <td><a href="#" class="btn btn-sm btn-warning">Edit</a></td>
                        </tr>
                       <?php
                       }
                       ?>
-                      </tbody>
+                      </tbody >
                     </table>
                 </div>
-                <!-- /.card-body -->
-                <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-                      <li class="page-item"><a class="page-link" href="#">&laquo;</a></li>
-                      <li class="page-item"><a class="page-link" href="#">1</a></li>
-                      <li class="page-item"><a class="page-link" href="#">2</a></li>
-                      <li class="page-item"><a class="page-link" href="#">3</a></li>
-                      <li class="page-item"><a class="page-link" href="#">&raquo;</a></li>
-                    </ul>
                 </div>
+                <!-- /.card-body -->
+                <div class="card-footer d-flex justify-content-between">
+                <span>Showing <?php echo $result->num_rows; ?> of <?php echo $total_batch; ?> batch</span>
+              <ul class="pagination pagination-sm mb-0">
+                <li class="page-item <?php echo ($page <= 1) ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo max(1, $page - 1); ?>&records_per_page=<?php echo $limit; ?>">&laquo;</a>
+                </li>
+                <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                  <li class="page-item <?php echo ($i == $page) ? 'active' : ''; ?>">
+                    <a class="page-link" href="?page=<?php echo $i; ?>&records_per_page=<?php echo $limit; ?>"><?php echo $i; ?></a>
+                  </li>
+                <?php } ?>
+                <li class="page-item <?php echo ($page >= $total_pages) ? 'disabled' : ''; ?>">
+                  <a class="page-link" href="?page=<?php echo min($total_pages, $page + 1); ?>&records_per_page=<?php echo $limit; ?>">&raquo;</a>
+                </li>
+              </ul>
+                </div>
+            </div>
             </div>
             <!-- /.card -->
         </div>

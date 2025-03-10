@@ -6,16 +6,16 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 // Function to delete user image
 function deleteUserImage($conn, $phone) {
-    $imagePath = "../uploads/"; // Folder where images are stored
-
-    // Check if image exists for the user
+    // Fetch the image filename from the database
     $query = "SELECT image FROM users WHERE user_phone = ?";
     $stmt = $conn->prepare($query);
-    if (!$stmt) die("SQL Prepare Error: " . $conn->error);
+    if (!$stmt) {
+        die("SQL Prepare Error: " . $conn->error);
+    }
 
     $stmt->bind_param("s", $phone);
     $stmt->execute();
-    $stmt->store_result(); // Store result to check if a row exists
+    $stmt->store_result();
 
     if ($stmt->num_rows > 0) {
         $stmt->bind_result($profileImage);
@@ -23,13 +23,13 @@ function deleteUserImage($conn, $phone) {
         $stmt->close();
 
         if (!empty($profileImage)) {
-            $fullPath = $imagePath . $profileImage;
-            if (file_exists($fullPath)) {
-                unlink($fullPath); // Delete the image file
+            $fullPath = realpath($profileImage);
+            if ($fullPath && file_exists($fullPath)) {
+                unlink($fullPath);
             }
         }
     } else {
-        $stmt->close(); // Close statement if no rows found
+        $stmt->close();
     }
 }
 
@@ -112,4 +112,3 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 }
 
 $conn->close();
-?>

@@ -64,9 +64,10 @@ $role_id = $_SESSION["role_id"]; // Get role_id from session
                                     </tr>
                                 </thead>
                                 <tbody id="TableBody">
-                                    <?php while ($row = $result->fetch_assoc()) { ?>
+                                    <?php while ($row = $result->fetch_assoc()) {     ?>
+                                    
                                         <tr>
-                                            <td><?= $row['student_id']; ?></td>
+                                            <td><?= $row['student_uid']; ?></td>
                                             <td><?= htmlspecialchars($row['student_name']); ?></td>
                                             <td><?= htmlspecialchars($row['student_email']); ?></td>
                                             <td><?= htmlspecialchars($row['student_phone']); ?></td>

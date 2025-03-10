@@ -1,3 +1,11 @@
 .attendance-input {
     width: 60px !important;
 }
+#reportrange
+{
+    background: #fff;
+     cursor: pointer;
+      padding: 5px 10px;
+       border: 1px solid #ccc;
+        width: 22%;
+}

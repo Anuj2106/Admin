@@ -9,6 +9,13 @@ if (!$data) {
     exit;
 }
 
+// Function to delete old profile image
+function deleteOldProfileImage($oldImagePath) {
+    if (!empty($oldImagePath) && file_exists($oldImagePath)) {
+        unlink($oldImagePath);
+    }
+}
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // ✅ Fetch User Details Based on Role
@@ -76,9 +83,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             if (move_uploaded_file($_FILES["user_image"]["tmp_name"], $target_file)) {
                 // ✅ Delete old image if it exists
-                if (!empty($oldImagePath) && file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
-                }
+                deleteOldProfileImage($oldImagePath);
                 $imagePath = $target_file; // Store new image path
             }
         }
@@ -102,16 +107,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $teacher_address = $conn->real_escape_string($data['teacher_address']);
 
                 $updateTeacher = "UPDATE teacher SET 
-                    teacher_name='$user_name', 
-                    teacher_email='$user_email', 
-                    teacher_phone='$user_phone', 
-                    teacher_salary='$teacher_salary', 
-                    teacher_qualification='$teacher_qualification', 
-                    teacher_status='$status', 
-                    teacher_experience='$teacher_experience', 
-                    teacher_join_date='$teacher_join_date', 
-                    teacher_address='$teacher_address' 
-                    WHERE teacher_email='$user_email'";
+                teacher_name='$user_name', 
+                teacher_email='$user_email', 
+                teacher_phone='$user_phone', 
+                teacher_salary='$teacher_salary', 
+                teacher_qualification='$teacher_qualification', 
+                teacher_status='$status', 
+                teacher_experience='$teacher_experience', 
+                teacher_join_date='$teacher_join_date', 
+                teacher_address='$teacher_address', 
+                teacher_image='$imagePath' 
+                WHERE teacher_email='$user_email'";
+            
 
                 $conn->query($updateTeacher);
             } elseif ($role_id == 4) { // Student Update
@@ -123,17 +130,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $student_address = $conn->real_escape_string($data['student_address']);
 
                 $updateStudent = "UPDATE student SET 
-                    student_name='$user_name', 
-                    student_email='$user_email', 
-                    student_phone='$user_phone', 
-                    course_id='$course_id', 
-                    batch_id='$student_batch', 
-                    student_status='$status', 
-                    student_fees='$student_fees', 
-                    student_address='$student_address', 
-                    student_gender='$student_gender', 
-                    student_joining_date='$student_join_date' 
-                    WHERE student_email='$user_email'";
+                student_name='$user_name', 
+                student_email='$user_email', 
+                student_phone='$user_phone', 
+                course_id='$course_id', 
+                batch_id='$student_batch', 
+                student_status='$status', 
+                student_fees='$student_fees', 
+                student_address='$student_address', 
+                student_gender='$student_gender', 
+                student_joining_date='$student_join_date', 
+                student_image='$imagePath' 
+                WHERE student_email='$user_email'";
+            
 
                 $conn->query($updateStudent);
             }
@@ -144,54 +153,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         exit;
     }
-
-    // ✅ Fetch Course Details by course_id
-    elseif (isset($data['fetch']) && isset($data['course_id'])) {
-        $course_id = (int)$data['course_id'];
-
-        $query = $conn->query("SELECT * FROM course WHERE course_id = '$course_id'");
-
-        if ($query->num_rows > 0) {
-            $course = $query->fetch_assoc();
-            echo json_encode($course);
-        } else {
-            echo json_encode(["error" => "Course not found"]);
-        }
-        exit;
-    }
-
-    // ✅ Update Course Details
-    elseif (isset($data['update'], $data['course_id'])) {
-        $course_id = (int)$data['course_id'];
-        $course_name = $conn->real_escape_string($data['course_name']);
-        $course_fees = (float)$data['course_fees'];
-        $course_time = $conn->real_escape_string($data['course_time']);
-        $course_gst = (float)$data['course_gst'];
-
-        // Calculate GST and total fees
-        $course_total_gst = ($course_fees * $course_gst) / 100;
-        $course_total_fee = $course_fees + $course_total_gst;
-
-        // Update SQL query
-        $updateCourse = "UPDATE course SET 
-            course_name = '$course_name', 
-            course_fees = '$course_fees', 
-            course_fees_gst = '$course_gst', 
-            course_total_fees = '$course_total_fee', 
-            course_time = '$course_time' 
-            WHERE course_id = '$course_id'";
-
-        if ($conn->query($updateCourse)) {
-            echo json_encode(["success" => "Course updated successfully"]);
-        } else {
-            echo json_encode(["error" => "Course update failed", "sql_error" => $conn->error]);
-        }
-        exit;
-    }
-
-    // ❌ Invalid request
-    else {
-        echo json_encode(["error" => "Invalid request"]);
-    }
 }
-?>

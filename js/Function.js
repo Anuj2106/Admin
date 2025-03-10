@@ -357,6 +357,7 @@ $(document).ready(function() {
         var attendance_date = $(this).data("date");
         var course_id = $(this).data("course");
         var batch_id = $(this).data("batch");
+        
 
         if (validKeys.includes(e.key)) {
             e.preventDefault(); // Prevent default behavior
@@ -374,9 +375,9 @@ $(document).ready(function() {
                     course_id: course_id,
                     batch_id: batch_id
                 },
-                success: function(response) {
-                    console.log(response);
-                },
+                // success: function(response) {
+                //     console.log(response);
+                // },
                 error: function() {
                     alert("Error updating attendance");
                 }
