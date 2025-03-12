@@ -45,7 +45,40 @@ if (isset($_POST['phone']) && isset($_POST['role']) && isset($_POST['status'])) 
     // Re-enable autocommit
     $conn->autocommit(true);
     $conn->close();
-} else {
+} elseif(isset($_POST['id']) && isset($_POST['status'])) {
+    $id = $_POST['id'];
+    $status = intval($_POST['status']); // Get current status (0 or 1)
+    
+    // Toggle status (if 0 -> 1, if 1 -> 0)
+    $newStatus = ($status == 0) ? 1 : 0;
+
+    // Disable autocommit to start transaction
+    $conn->autocommit(false);
+    $success = true; // Flag to track success
+
+    try {
+        // Update course table
+        $stmt = $conn->prepare("UPDATE course SET course_status = ? WHERE course_id = ?");
+        $stmt->bind_param("ii", $newStatus, $id);
+        if (!$stmt->execute()) throw new Exception("Failed to update course table");
+        $stmt->close();
+
+        // Commit the transaction
+        $conn->commit();
+        echo "success";
+    } catch (Exception $e) {
+        $conn->rollback();
+        echo "Error: " . $e->getMessage();
+    }
+
+    // Re-enable autocommit
+    $conn->autocommit(true);
+    $conn->close();
+
+} 
+
+else {
     echo "Invalid request!";
 }
+
 ?>

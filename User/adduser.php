@@ -5,7 +5,7 @@ $response = []; // Initialize the response array
 
 // Function to generate a unique alphanumeric UID based on name
 function generateUID($conn, $role, $name) {
-    $shortName = strtoupper(substr($name, 0, 4)); // Get first 4 characters of the name
+    $shortName = "HART"; // Use "HART" instead of the first 4 characters of the name
     
     // Determine the table name based on role
     $table = ($role == 3) ? "teacher" : "student";
@@ -24,7 +24,7 @@ function generateUID($conn, $role, $name) {
         }
     }
     
-    return $shortName . str_pad($count, 3, "0", STR_PAD_LEFT); // Format: NAME001
+    return $shortName . str_pad($count, 3, "0", STR_PAD_LEFT); // Format: HART001
 }
 
 // Helper function to handle image upload

@@ -65,6 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
       crossorigin="anonymous"
     />
+    <link rel="icon" href="/education/Admin/img/AdminLTELogo.png">
     <!--end::Third Party Plugin(Bootstrap Icons)-->
     <!--begin::Required Plugin(AdminLTE)-->
     <link rel="stylesheet" href="/education/Admin/css/adminlte.css" />

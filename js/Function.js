@@ -16,8 +16,10 @@ $(document).ready(function () {
       let recordPhone = button.data("phone");
       let role = button.data("role");
       let currentStatus = button.data("status");
+      let id = button.data("id");
+      
 
-      $.post("../Components/update_status.php", { phone: recordPhone, status: currentStatus, role: role }, function (response) {
+      $.post("../Components/update_status.php", { phone: recordPhone, status: currentStatus, role: role ,id:id }, function (response) {
           if (response.trim() === "success") {
               let newStatus = currentStatus == 1 ? 0 : 1;
               button.data("status", newStatus).toggleClass("btn-success btn-danger").find("p").text(newStatus ? "Inactive" : "Active");
@@ -284,6 +286,8 @@ $(document).ready(function () {
             data: JSON.stringify({ fetch: true, course_id: courseId }), 
             dataType: "json",
             success: function (response) {
+                console.log(response);
+                
                 if (response.error) {
                     Swal.fire("Error!", response.error, "error");
                 } else {
@@ -293,6 +297,7 @@ $(document).ready(function () {
                     $("#editCourseFees").val(response.course_fees);
                     $("#editCourseGst").val(response.course_fees_gst);
                     $("#editCourseTime").val(response.course_time);
+                    $("#editCourseStatus").val(response.course_status);
 
                     $("#editCourseModal").modal("show"); // Show modal
                 }
@@ -313,6 +318,9 @@ $(document).ready(function () {
         let courseFees = $("#editCourseFees").val();
         let courseGst = $("#editCourseGst").val();
         let courseTime = $("#editCourseTime").val();
+        let courseStatus = $("#editCourseStatus").val();
+       
+        
 
         let formData = {
             update: true,
@@ -320,7 +328,8 @@ $(document).ready(function () {
             course_name: courseName,
             course_fees: courseFees,
             course_gst: courseGst,
-            course_time: courseTime
+            course_time: courseTime,
+            course_status:courseStatus
         };
 
         console.log("Sending update data:", formData);
@@ -483,3 +492,17 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 });
+document.addEventListener("DOMContentLoaded", function () {
+    document.querySelectorAll(".toggle-row").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        let target = document.querySelector(this.getAttribute("data-target"));
+        if (target.classList.contains("show")) {
+          target.classList.remove("show");
+          this.innerHTML = '<i class="bi bi-plus-circle rounded"></i>';
+        } else {
+          target.classList.add("show");
+          this.innerHTML = '<i class="bi bi-dash-circle rounded"></i>';
+        }
+      });
+    });
+  });

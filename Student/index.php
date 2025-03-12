@@ -49,7 +49,7 @@ $role_id = $_SESSION["role_id"]; // Get role_id from session
                             <table class="table table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
+                                        <th>UID</th>
                                         <th>Name</th>
                                         <th>Email</th>
                                         <th>Phone</th>

@@ -71,7 +71,10 @@ $count = $offset + 1;
                     <th>Fees (₹)</th>
                     <th>GST (%)</th>
                     <th>Total (₹)</th>
+                    <th>Discount (%)</th>
                     <th>Duration (Weeks)</th>
+                    <th> Status</th>
+                    <th>Discount</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -83,7 +86,27 @@ $count = $offset + 1;
                       <td><?php echo $row['course_fees']; ?></td>
                       <td><?php echo $row['course_fees_gst']; ?></td>
                       <td><?php echo $row['course_total_fees']; ?></td>
+                      <td><?php echo $row['course_discount']; ?></td>
                       <td><?php echo $row['course_time']; ?></td>
+                      <td><button class="btn btn-sm toggle-status <?php echo $row['course_status'] == 0 ? 'btn-success' : 'btn-danger'; ?>" data-id="<?php echo $row['course_id']; ?>" 
+              data-status="<?php echo $row['course_status']; ?>" >
+                <p class="mb-0">
+                  <?php echo $row['course_status'] == 0 ? 'Active' : 'Inactive'; ?>
+                </p>
+              </button></td>
+              <td>
+              <button class="btn btn-sm Discount-btn <?php echo $row['course_dis'] == 0 ? 'btn-success' : 'btn-danger'; ?>" 
+        data-id="<?php echo $row['course_id']; ?>" 
+        data-discount="<?php echo $row['course_dis']; ?>"
+        data-totalfees="<?php echo $row['course_total_fees']; ?>"
+        data-discountamount="<?php echo $row['course_discount']; ?>">
+    <p class="mb-0">
+      <?php echo $row['course_dis'] == 0 ? 'Apply ' : 'Remove'; ?>
+    </p>
+</button>
+
+</td>
+             
                       <td>
                         <button type="button" class="btn btn-sm edit-course-btn btn-primary btn-rounded" data-id="<?php echo intval($row['course_id']); ?>">
                           <i class="bi bi-pencil-square"></i>
@@ -122,8 +145,117 @@ $count = $offset + 1;
     </div>
   </div>
 </main>
+<!-- Discount Modal -->
+<div class="modal fade" id="discountModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Apply Discount</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="course_id">
+        <input type="hidden" id="current_discount">
+        <div class="mb-3">
+          <label for="discountPercentage" class="form-label">Discount Percentage:</label>
+          <input type="number" id="discountPercentage" class="form-control" min="1" max="100">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" id="applyDiscount">Apply</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
+<script>
+$(document).ready(function () {
+    $(".Discount-btn").click(function () {
+        let courseId = $(this).data("id");
+        let courseDis = $(this).data("discount");
+
+        $("#course_id").val(courseId);
+        $("#current_discount").val(courseDis);
+
+        if (courseDis == 0) {
+            $("#discountPercentage").val(""); // Reset input
+            $("#discountModal").modal("show");
+        } else {
+            // Confirmation before removing discount
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Do you want to remove the discount?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Yes, remove it!",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: "../Components/update_discount.php",
+                        type: "POST",
+                        data: { course_id: courseId, discount_percentage: 0, action: "remove" },
+                        success: function (response) {
+                            let data = JSON.parse(response);
+                            if (data.status === "success") {
+                                Swal.fire({
+                                    title: "Discount Removed!",
+                                    text: "The discount has been successfully removed.",
+                                    icon: "success",
+                                    timer: 2000,
+                                    showConfirmButton: false,
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            } else {
+                                Swal.fire("Error!", data.message, "error");
+                            }
+                        },
+                    });
+                }
+            });
+        }
+    });
+
+    // Apply discount
+    $("#applyDiscount").click(function () {
+        let courseId = $("#course_id").val();
+        let discountPercentage = $("#discountPercentage").val();
+
+        if (discountPercentage < 1 || discountPercentage > 100) {
+            Swal.fire("Invalid Input!", "Enter a valid discount percentage (1-100)", "error");
+            return;
+        }
+
+        $.ajax({
+            url: "../Components/update_discount.php",
+            type: "POST",
+            data: { course_id: courseId, discount_percentage: discountPercentage, action: "apply" },
+            success: function (response) {
+                let data = JSON.parse(response);
+                if (data.status === "success") {
+                    Swal.fire({
+                        title: "Discount Applied!",
+                        text: `A discount of ${discountPercentage}% has been applied.`,
+                        icon: "success",
+                        timer: 2000,
+                        showConfirmButton: false,
+                    }).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire("Error!", data.message, "error");
+                }
+            },
+        });
+    });
+});
+
+
+</script>
 
 <?php include "../Components/footer.php";
 include "../Components/modal.php";

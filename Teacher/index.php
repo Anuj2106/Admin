@@ -63,6 +63,7 @@ $count=1;
         <tr>
           <th>Uid</th>
           <th>Name</th>
+          <th>Photo</th>
           <th>Email</th>
           <th>Phone</th>
           <th>Salary</th>
@@ -78,8 +79,8 @@ $count=1;
         <?php while ($row = $result->fetch_assoc()) { ?>
           <tr>
             <td><?php echo $row['teacher_uid'] ?></td>
-            <td><img src="<?php echo $row['teacher_image']; ?>" style="width: 45px; height: 45px" alt=""></td>
             <td><?php echo $row['teacher_name']; ?></td>
+            <td><img src="<?php echo $row['teacher_image']; ?>" style="width: 45px; height: 45px" alt=""></td>
             <td><?php echo $row['teacher_email']; ?></td>
             <td><?php echo $row['teacher_phone']; ?></td>
             <td><?php echo $row['teacher_salary']; ?></td>

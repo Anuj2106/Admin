@@ -84,10 +84,10 @@
               </div>
               <div class="mb-3">
                 <label for="studentCourse" class="form-label">Course</label>
-                <select class="form-select" id="studentCourse" name="course_id" >
+                <select class="form-select" id="studentCourse" name="course_id">
                   <option value="">-- Select --</option>
                   <?php
-                  $sql = "SELECT * FROM course";
+                  $sql = "SELECT * FROM course WHERE course_status = 0";
                   $result = $conn->query($sql);
                   while ($row = $result->fetch_assoc()) {
                   ?>
@@ -153,6 +153,13 @@
             <label for="courseTime" class="form-label">Duration (in weeks/months)</label>
             <input type="text" class="form-control" id="courseTime" name="course_time" required>
           </div>
+          <div class="mb-3">
+            <label for="CourseStatus" class="form-label">Status</label>
+            <select class="form-select" id="CourseStatus" name="status" required>
+              <option value="0">Active</option>
+              <option value="1">Inactive</option>
+            </select>
+          </div>
           <button type="submit" class="btn btn-primary">Add Course</button>
         </form>
       </div>
@@ -185,6 +192,13 @@
           <div class="mb-3">
             <label for="editCourseTime" class="form-label">Duration (in weeks/months)</label>
             <input type="text" class="form-control" id="editCourseTime" name="course_time" required>
+          </div>
+          <div class="mb-3">
+            <label for="editCourseStatus" class="form-label">Status</label>
+            <select class="form-select" id="editCourseStatus" name="status" required>
+              <option value="0">Active</option>
+              <option value="1">Inactive</option>
+            </select>
           </div>
           <button type="submit" class="btn btn-primary">Update Course</button>
         </form>
@@ -289,15 +303,15 @@
     <select class="form-select" id="editStudentCourse" name="course_id">
         <option value="">-- Select --</option>
         <?php
-        $sql = "SELECT * FROM course";
+        $sql = "SELECT * FROM course WHERE course_status = 0";
         $result = $conn->query($sql);
 
         // Assuming $selectedCourseId is retrieved from the database (previously selected value)
         while ($row = $result->fetch_assoc()) {
-            $selected = ($row['course_id'] == $selectedCourseId) ? 'selected' : '';
+         
            
             ?>
-            <option value="<?php echo $row['course_id']; ?>" <?php echo $selected; ?>>
+            <option value="<?php echo $row['course_id']; ?>" >
                 <?php echo htmlspecialchars($row['course_name']); ?>
             </option>
         <?php

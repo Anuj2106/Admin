@@ -62,7 +62,7 @@ function renderSmallBoxWidget($total, $label, $icon, $link, $bgColor, $textColor
         <h3>$total</h3>
         <p>$label</p>
       </div>
-      <svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' class='bi $icon small-box-icon' viewBox='0 0 16 16'></svg>
+      <i class='bi $icon small-box-icon'></i>
       <a href='$link' class='small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover'>
         More info <i class='bi bi-link-45deg'></i>
       </a>
@@ -90,24 +90,38 @@ function renderDashboardHeader() {
 }
 
 function renderDashboardContent($conn) {
-  $totalUsers = getTotalCount($conn, "users");
-  $totalteacher = getTotalCount($conn, "teacher");
-  $totalcourse = getTotalCount($conn, "course");
-  $totalstudent = getTotalCount($conn, "student");
+  $widgets = [
+      ["count" => getTotalCount($conn, "users"), "label" => "Users", "icon" => "bi-people-fill", "link" => "/education/Admin/User", "bgColor" => "text-bg-primary"],
+      ["count" => getTotalCount($conn, "teacher"), "label" => "Employees", "icon" => "bi-person-video", "link" => "/education/Admin/Teacher", "bgColor" => "text-bg-success"],
+      ["count" => getTotalCount($conn, "student"), "label" => "Students", "icon" => "bi-person-fill-add", "link" => "/education/Admin/Student", "bgColor" => "text-bg-warning"],
+      ["count" => getTotalCount($conn, "course"), "label" => "Courses", "icon" => "bi-book", "link" => "/education/Admin/Course", "bgColor" => "text-bg-danger"],
+      ["count" => getTotalCount($conn, "student"), "label" => "Attendance", "icon" => "bi-table", "link" => "/education/Admin/Attendance", "bgColor" => "text-bg-success"]
+  ];
 
-  echo "<div class='row'>";
-  renderSmallBoxWidget($totalUsers, 'Users', 'bi-people-fill', '/education/Admin/User', 'text-bg-primary');
-  renderSmallBoxWidget($totalteacher, 'Employees', 'bi-person-video', '/education/Admin/Teacher', 'text-bg-success');
-  renderSmallBoxWidget($totalstudent, 'Students', 'bi-person-fill-add', '/education/Admin/Student', 'text-bg-warning', 'text-white');
-  renderSmallBoxWidget($totalcourse, 'Courses', 'bi-book', '/education/Admin/Course', 'text-bg-danger');
-  echo "</div>";
+  echo "<div class='container-fluid'>";
+
+  // Loop through widgets and create a new row after every 4 items
+  foreach ($widgets as $index => $widget) {
+      if ($index % 4 == 0) {
+          // Close previous row if not the first and open a new row
+          if ($index > 0) echo "</div>";
+          echo "<div class='row'>";
+      }
+
+      renderSmallBoxWidget($widget["count"], $widget["label"], $widget["icon"], $widget["link"], $widget["bgColor"]);
+  }
+
+  echo "</div></div>"; // Close last row and container
 }
 
-function renderTeacherContent() {
+
+function renderTeacherContent($conn) {
+  $totalcourse = getTotalCount($conn, "course");
+  $totalstudent = getTotalCount($conn, "student");
   echo "<div class='row'>";
-  renderSmallBoxWidget(10, 'Students', 'bi-person-fill-add', '#', 'text-bg-warning', 'text-white');
-  renderSmallBoxWidget(5, 'Courses', 'bi-book', '#', 'text-bg-danger');
-  renderSmallBoxWidget(10, 'Attendance', 'bi-table', '#', 'text-bg-success');
+  renderSmallBoxWidget($totalstudent, 'Students', 'bi-person-fill-add', '#', 'text-bg-warning', 'text-white');
+  renderSmallBoxWidget($totalcourse, 'Courses', 'bi-book', '#', 'text-bg-danger');
+  renderSmallBoxWidget($totalstudent, 'Attendance', 'bi-table', '#', 'text-bg-success');
   echo "</div>";
 }
 

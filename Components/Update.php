@@ -44,8 +44,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             echo json_encode($user);
-        } else {
+        }
+        else {
             echo json_encode(["error" => "User not found"]);
+        }
+        exit;
+    }
+    
+    // ✅ Fetch Course Details by course_id
+    elseif (isset($data['fetch']) && isset($data['course_id'])) {
+        $course_id = (int)$data['course_id'];
+
+        $query = $conn->query("SELECT * FROM course WHERE course_id = '$course_id'");
+
+        if ($query->num_rows > 0) {
+            $course = $query->fetch_assoc();
+            echo json_encode($course);
+        } else {
+            echo json_encode(["error" => "Course not found"]);
         }
         exit;
     }
@@ -153,4 +169,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         exit;
     }
+    elseif (isset($data['update'], $data['course_id'])) {
+        $course_id = (int)$data['course_id'];
+        $course_name = $conn->real_escape_string($data['course_name']);
+        $course_fees = (float)$data['course_fees'];
+        $course_time = $conn->real_escape_string($data['course_time']);
+        $course_gst = (float)$data['course_gst'];
+        $course_status =(int)$data['course_status'];
+
+        // Calculate GST and total fees
+        $course_total_gst = ($course_fees * $course_gst) / 100;
+        $course_total_fee = $course_fees + $course_total_gst;
+
+        $updateCourse = "UPDATE course SET 
+        course_name = ?, 
+        course_fees = ?, 
+        course_fees_gst = ?, 
+        course_total_fees = ?, 
+        course_time = ?, 
+        course_status = ?
+    WHERE course_id = ?";
+    
+    $stmt = $conn->prepare($updateCourse);
+    $stmt->bind_param("sdddsii", $course_name, $course_fees, $course_gst, $course_total_fee, $course_time, $course_status, $course_id);
+    
+    if ($stmt->execute()) {
+        echo json_encode(["success" => "Course updated successfully"]);
+    } else {
+        echo json_encode(["error" => "Course update failed", "sql_error" => $stmt->error]);
+    }
+        exit;
+    }
+
 }
